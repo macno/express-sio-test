@@ -1,0 +1,10 @@
+extends layout
+
+block content
+  h1= title
+  p Welcome to #{title}
+  #container
+block js
+  script(src="//code.jquery.com/jquery-3.3.1.min.js")
+  script(src="/socket.io/socket.io.js")
+  script(src="/javascripts/tester.js")
