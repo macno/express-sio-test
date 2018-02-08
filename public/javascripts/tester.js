@@ -26,13 +26,20 @@ var renderer = {
       .append(stopButton)
       .append(logger);
   },
+  showHistory: function(history) {
+    for (let i = history.length - 1; i >= 0; i--) {
+      const item = history[i];
+      if (item.line !== '')
+        logger.prepend('<span class="' + (item.type === 'err' ? 'error' : '') + '">' + item.line + '</span><br/>');
+    }
+  },
   showCompleted: function() {
     message.text('Test completed');
     stopButton.text('CLEAR');
   },
   appendLog: function(lines, error) {
     lines.forEach(line => {
-      logger.append('<p class="' + (error ? 'error' : '') + '">' + line + '</p>');
+      if (line !== '') logger.append('<span class="' + (error ? 'error' : '') + '">' + line + '</span><br/>');
     });
   }
 };
@@ -45,6 +52,7 @@ socket.on('status', function(status) {
     renderer.showNotRunning();
   } else {
     renderer.showRunning();
+    socket.emit('status:history');
   }
 });
 socket.on('test:log', function(lines) {
@@ -55,4 +63,7 @@ socket.on('test:error', function(lines) {
 });
 socket.on('test:completed', function(line) {
   renderer.showCompleted();
+});
+socket.on('history', function(history) {
+  renderer.showHistory(history);
 });
